@@ -14,8 +14,9 @@ class MyApp extends StatelessWidget {
       title: 'Thesis App O.O',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: const Color(0xFFf4717f),
-          secondary: const Color(0xFF544e50),
+          primary: const Color(0xFF544e50),
+          secondary: const Color(0xFFe9e1e3),
+          background: const Color(0xFFe9e1e3),
         ),
       ),
       home: HomePage(),

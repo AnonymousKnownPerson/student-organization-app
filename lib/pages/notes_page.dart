@@ -9,12 +9,18 @@ class NotesPage extends StatefulWidget {
   State<NotesPage> createState() => _NotesPageState();
 }
 
-class _NotesPageState extends State<NotesPage> {
+class _NotesPageState extends State<NotesPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      appBar: AppBarWidget(title: 'Notes'),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: const AppBarWidget(title: 'Notes'),
       body: Container(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

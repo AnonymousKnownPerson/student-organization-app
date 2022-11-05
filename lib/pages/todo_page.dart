@@ -9,12 +9,18 @@ class ToDoPage extends StatefulWidget {
   State<ToDoPage> createState() => _ToDoPageState();
 }
 
-class _ToDoPageState extends State<ToDoPage> {
+class _ToDoPageState extends State<ToDoPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      appBar: AppBarWidget(title: 'To Do List'),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: const AppBarWidget(title: 'To Do List'),
       body: Container(),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

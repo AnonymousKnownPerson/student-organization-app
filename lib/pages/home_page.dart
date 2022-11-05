@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:student_app/pages/calendar_page.dart';
 import 'package:student_app/pages/notes_page.dart';
 import 'package:student_app/pages/settings_page.dart';
 import 'package:student_app/pages/todo_page.dart';
-
-import '../widgets/appbar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,8 +13,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentPage = 0;
-  PageController _pageController = PageController();
-  List<Widget> _pagesList = [
+  final PageController _pageController = PageController();
+  final List<Widget> _pagesList = [
     CalendarPage(),
     NotesPage(),
     ToDoPage(),
@@ -49,7 +45,7 @@ class _HomePageState extends State<HomePage> {
         unselectedItemColor: Theme.of(context).colorScheme.secondary,
         showUnselectedLabels: true,
         onTap: _onBottomBarTap,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             label: 'Calendar',
             icon: Icon(
