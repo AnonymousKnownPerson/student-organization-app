@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/appbar.dart';
+
 class NotesPage extends StatefulWidget {
   NotesPage({Key? key}) : super(key: key);
 
@@ -10,6 +12,9 @@ class NotesPage extends StatefulWidget {
 class _NotesPageState extends State<NotesPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBarWidget(title: 'Notes'),
+      body: Container(),
+    );
   }
 }
