@@ -1,10 +1,7 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../widgets/appbar.dart';
-import '../widgets/calendar.dart';
 
 class CalendarPage extends StatefulWidget {
   CalendarPage({Key? key}) : super(key: key);

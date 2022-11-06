@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   persistent_bottom_nav_bar: any
   table_calendar: ^3.0.8
+  sqflite: ^2.2.0+3
 
 dev_dependencies:
   flutter_test:
