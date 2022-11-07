@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_app/widgets/deletePopup.dart';
+import 'package:getwidget/getwidget.dart';
 
 import '../db/note_database.dart';
 import '../models/note.dart';
@@ -138,8 +139,8 @@ class _NotesPageState extends State<NotesPage>
                       color: Theme.of(context).colorScheme.primary))*/
                   ],
                 )
-              : Expanded(
-                  child: Text('data'),
+              : const Positioned.fill(
+                  child: Center(child: GFLoader()),
                 ),
         ),
       ),

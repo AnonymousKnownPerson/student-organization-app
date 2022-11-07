@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:student_app/pages/calendar_page.dart';
+import 'package:student_app/pages/notes_page.dart';
+import 'package:student_app/pages/settings_page.dart';
+import 'package:student_app/pages/todo_page.dart';
 
 import './pages/home_page.dart';
 
@@ -20,7 +24,14 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'Quicksand',
       ),
-      home: HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/calendar-page': (context) => CalendarPage(),
+        '/todo-list': (context) => ToDoPage(),
+        '/notes': (context) => const NotesPage(),
+        '/settings': (context) => const SettingsPage(),
+      },
     );
   }
 }
