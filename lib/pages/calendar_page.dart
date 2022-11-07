@@ -52,17 +52,21 @@ class _CalendarPageState extends State<CalendarPage>
             onPageChanged: (focusedDay) {
               _focusedDay = focusedDay;
             },
-            eventLoader: (day) {
-              return _getEventsForDay(day);
-            },
+            //eventLoader: (day) {
+            //  return _getEventsForDay(day);
+            //},
           ),
           Card(
             child: Container(
-              child: _calendarDayList.isEmpty
-                  ? const Text(
-                      "No transactions yet!",
-                    )
-                  : ListView.builder(
+                height: 200,
+                child: _calendarDayList.isEmpty
+                    ? const Text(
+                        "No transactions yet!",
+                      )
+                    : const Text(
+                        "No transactions yet!",
+                      ) /* 
+                  ListView.builder(
                       itemBuilder: (contx, index) {
                         return Card(
                           margin: const EdgeInsets.symmetric(
@@ -74,8 +78,8 @@ class _CalendarPageState extends State<CalendarPage>
                         );
                       },
                       itemCount: _calendarDayList.length,
-                    ),
-            ),
+                    ),*/
+                ),
           ),
         ],
       ),

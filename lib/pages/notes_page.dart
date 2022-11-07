@@ -17,7 +17,15 @@ class _NotesPageState extends State<NotesPage>
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: const AppBarWidget(title: 'Notes'),
-      body: Container(),
+      body: Container(
+        child: Column(
+          children: [
+            Card(
+              child: Text('Test'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

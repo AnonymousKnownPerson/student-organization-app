@@ -16,8 +16,8 @@ class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
   final List<Widget> _pagesList = [
     CalendarPage(),
-    NotesPage(),
     ToDoPage(),
+    NotesPage(),
     SettingsPage(),
   ];
   void _onPageChanged(int index) {

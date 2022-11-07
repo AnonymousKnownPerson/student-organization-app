@@ -33,8 +33,18 @@ class Note {
       NoteFields.date: date?.toIso8601String(),
       NoteFields.done: done == true ? 1 : 0,
     };
+    // Please don't look at this code it's 11 PM
     if (id != null) {
       map[NoteFields.id] = id;
+    }
+    if (subtitle != null) {
+      map[NoteFields.subtitle] = subtitle;
+    }
+    if (piority != null) {
+      map[NoteFields.piority] = piority;
+    }
+    if (date != null) {
+      map[NoteFields.date] = date;
     }
     return map;
   }

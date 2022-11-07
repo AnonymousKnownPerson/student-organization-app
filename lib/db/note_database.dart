@@ -72,8 +72,7 @@ class NoteDatabase {
     }
   }
 
-/*
-  Future<List<Transaction>> readAllTransactions() async {
+  Future<List<Note>> readAllNotes() async {
     final db = await instance.database;
     final result = await db.query(
       tableNote,
@@ -81,7 +80,7 @@ class NoteDatabase {
     );
     return result.map((e) => Note.fromMap(e)).toList();
   }
-*/
+
   Future<int> updateNote(Note note) async {
     final db = await instance.database;
     return db.update(
