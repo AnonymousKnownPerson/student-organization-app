@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:student_app/db/note_database.dart';
 import 'package:student_app/pages/calendar_page.dart';
 import 'package:student_app/pages/notes_page.dart';
 import 'package:student_app/pages/settings_page.dart';
 import 'package:student_app/pages/todo_page.dart';
+
+import '../models/note.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,8 +20,8 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pagesList = [
     CalendarPage(),
     ToDoPage(),
-    NotesPage(),
-    SettingsPage(),
+    const NotesPage(),
+    const SettingsPage(),
   ];
   void _onPageChanged(int index) {
     setState(() {

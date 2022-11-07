@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
           secondary: const Color(0xFFe9e1e3),
           background: const Color(0xFFe9e1e3),
         ),
+        fontFamily: 'Quicksand',
       ),
       home: HomePage(),
     );

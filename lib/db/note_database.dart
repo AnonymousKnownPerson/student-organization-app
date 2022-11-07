@@ -24,18 +24,17 @@ class NoteDatabase {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     const titleType = 'TEXT NOT NULL';
     const subtitleType = 'TEXT';
-    const piorityType = 'INTEGER';
-    const dateType = 'TEXT NOT NULL';
+    const priorityType = 'INTEGER';
     const doneType = 'INTEGER NOT NULL';
-
+    const isActiveType = 'INTEGER NOT NULL';
     await db.execute('''
     CREATE TABLE $tableNote (
       ${NoteFields.id} $idType,
       ${NoteFields.title} $titleType,
       ${NoteFields.subtitle} $subtitleType,
-      ${NoteFields.piority} $piorityType,
-      ${NoteFields.date} $dateType,
-      ${NoteFields.done} $doneType
+      ${NoteFields.priority} $priorityType,
+      ${NoteFields.done} $doneType,
+      ${NoteFields.isActive} $isActiveType
     )
     ''');
   }
@@ -64,7 +63,7 @@ class NoteDatabase {
   Future readLatestNoteId() async {
     final db = await instance.database;
     final result = await db.rawQuery(
-        '''SELECT max(${NoteFields.id}), ${NoteFields.title}, ${NoteFields.subtitle}, ${NoteFields.piority}, ${NoteFields.date}, ${NoteFields.done} FROM $tableNote''');
+        '''SELECT max(${NoteFields.id}), ${NoteFields.title}, ${NoteFields.subtitle}, ${NoteFields.priority}, ${NoteFields.done}, ${NoteFields.isActive} FROM $tableNote''');
     if (result.isNotEmpty) {
       return Note.fromMap(result.first).id;
     } else {
@@ -72,11 +71,24 @@ class NoteDatabase {
     }
   }
 
+  //not useful rn
+/*
   Future<List<Note>> readAllNotes() async {
     final db = await instance.database;
     final result = await db.query(
       tableNote,
-      orderBy: '${NoteFields.date} ASC',
+      orderBy: '${NoteFields.priority} DESC',
+    );
+    return result.map((e) => Note.fromMap(e)).toList();
+  }
+*/
+  Future<List<Note>> readNotes(bool active) async {
+    final db = await instance.database;
+    final result = await db.query(
+      tableNote,
+      where: '${NoteFields.isActive} = ?',
+      whereArgs: [active == true ? 1 : 0],
+      orderBy: '${NoteFields.priority} DESC',
     );
     return result.map((e) => Note.fromMap(e)).toList();
   }

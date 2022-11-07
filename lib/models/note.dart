@@ -1,37 +1,41 @@
-final String tableNote = 'note.db';
+final String tableNote = 'note';
 
 class NoteFields {
-  static final List<String> values = [id, title, subtitle, piority, date, done];
+  static final List<String> values = [
+    id,
+    title,
+    subtitle,
+    priority,
+    done,
+    isActive
+  ];
   static const String id = '_id';
   static const String title = 'title';
   static const String subtitle = 'subtitle';
-  static const String piority = 'piority';
-  static const String date = 'date';
+  static const String priority = 'priority';
   static const String done = 'done';
+  static const String isActive = 'isActive';
 }
 
 class Note {
   final int? id;
   final String title;
   final String? subtitle;
-  final int? piority;
-  final DateTime? date;
+  final int? priority;
   final bool done;
-  Note({
-    this.id,
-    required this.title,
-    this.subtitle,
-    this.piority,
-    this.date,
-    required this.done,
-  });
+  final bool isActive;
+  Note(
+      {this.id,
+      required this.title,
+      this.subtitle,
+      this.priority,
+      required this.done,
+      required this.isActive});
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
       NoteFields.title: title,
-      NoteFields.subtitle: subtitle,
-      NoteFields.piority: piority,
-      NoteFields.date: date?.toIso8601String(),
       NoteFields.done: done == true ? 1 : 0,
+      NoteFields.isActive: isActive == true ? 1 : 0,
     };
     // Please don't look at this code it's 11 PM
     if (id != null) {
@@ -40,11 +44,8 @@ class Note {
     if (subtitle != null) {
       map[NoteFields.subtitle] = subtitle;
     }
-    if (piority != null) {
-      map[NoteFields.piority] = piority;
-    }
-    if (date != null) {
-      map[NoteFields.date] = date;
+    if (priority != null) {
+      map[NoteFields.priority] = priority;
     }
     return map;
   }
@@ -53,25 +54,25 @@ class Note {
     int? id,
     String? title,
     String? subtitle,
-    int? piority,
-    DateTime? date,
+    int? priority,
     bool? done,
+    bool? isActive,
   }) =>
       Note(
         id: id ?? this.id,
         title: title ?? this.title,
         subtitle: subtitle ?? this.subtitle,
-        piority: piority ?? this.piority,
-        date: date ?? this.date,
+        priority: priority ?? this.priority,
         done: done ?? this.done,
+        isActive: isActive ?? this.isActive,
       );
 
   static Note fromMap(Map<String, Object?> note) => Note(
         id: note[NoteFields.id] as int?,
         title: note[NoteFields.title] as String,
         subtitle: note[NoteFields.subtitle] as String?,
-        piority: note[NoteFields.piority] as int?,
-        date: DateTime.parse(note[NoteFields.date] as String),
+        priority: note[NoteFields.priority] as int?,
         done: note[NoteFields.done] == 1,
+        isActive: note[NoteFields.isActive] == 1,
       );
 }

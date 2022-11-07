@@ -38,23 +38,33 @@ class _CalendarPageState extends State<CalendarPage>
       appBar: const AppBarWidget(title: 'Calendar'),
       body: Column(
         children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2010, 10, 16),
-            lastDay: DateTime.utc(2030, 3, 14),
-            focusedDay: _focusedDay,
-            onDaySelected: _onDaySelected,
-            calendarFormat: _calFormat,
-            onFormatChanged: _onFormatChanged,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onPageChanged: (focusedDay) {
-              _focusedDay = focusedDay;
-            },
-            //eventLoader: (day) {
-            //  return _getEventsForDay(day);
-            //},
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 2, 0, 0),
+            child: Card(
+              elevation: 2,
+              margin: EdgeInsets.fromLTRB(2, 3, 2, 5),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 6),
+                child: TableCalendar(
+                  firstDay: DateTime.utc(2010, 10, 16),
+                  lastDay: DateTime.utc(2030, 3, 14),
+                  focusedDay: _focusedDay,
+                  onDaySelected: _onDaySelected,
+                  calendarFormat: _calFormat,
+                  onFormatChanged: _onFormatChanged,
+                  startingDayOfWeek: StartingDayOfWeek.monday,
+                  selectedDayPredicate: (day) {
+                    return isSameDay(_selectedDay, day);
+                  },
+                  onPageChanged: (focusedDay) {
+                    _focusedDay = focusedDay;
+                  },
+                  //eventLoader: (day) {
+                  //  return _getEventsForDay(day);
+                  //},
+                ),
+              ),
+            ),
           ),
           Card(
             child: Container(
