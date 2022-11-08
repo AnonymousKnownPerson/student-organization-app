@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../models/calendar.dart';
 import '../widgets/appbar.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -45,8 +46,8 @@ class _CalendarPageState extends State<CalendarPage>
               margin: EdgeInsets.fromLTRB(2, 3, 2, 5),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(0, 0, 0, 6),
-                child: TableCalendar(
-                  firstDay: DateTime.utc(2010, 10, 16),
+                child: TableCalendar<Calendar>(
+                  firstDay: DateTime.utc(2022, 10, 1),
                   lastDay: DateTime.utc(2030, 3, 14),
                   focusedDay: _focusedDay,
                   onDaySelected: _onDaySelected,

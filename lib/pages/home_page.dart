@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_app/db/note_database.dart';
+import 'package:student_app/db/database.dart';
 import 'package:student_app/pages/calendar_page.dart';
 import 'package:student_app/pages/notes_page.dart';
 import 'package:student_app/pages/settings_page.dart';
@@ -45,19 +45,19 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    NoteDatabase.instance.close();
+    StudentDatabase.instance.close();
     super.dispose();
   }
 
   Future _refreshForNotes() async {
     setState(() => _isLoading = true);
-    _notesList = await NoteDatabase.instance.readNotes(false);
+    _notesList = await StudentDatabase.instance.readNotes(false);
     setState(() => _isLoading = false);
   }
 
   Future _refreshForToDo() async {
     setState(() => _isLoading = true);
-    _toDoList = await NoteDatabase.instance.readNotes(true);
+    _toDoList = await StudentDatabase.instance.readNotes(true);
     setState(() => _isLoading = false);
   }
 

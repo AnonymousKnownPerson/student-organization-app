@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:student_app/widgets/deletePopup.dart';
 import 'package:getwidget/getwidget.dart';
 
-import '../db/note_database.dart';
+import '../db/database.dart';
 import '../models/note.dart';
 import '../widgets/addNotePopup.dart';
 import '../widgets/appbar.dart';
@@ -29,21 +29,21 @@ class _NotesPageState extends State<NotesPage>
         priority: priority,
         done: false,
         isActive: false);
-    await NoteDatabase.instance.create(newNote);
+    await StudentDatabase.instance.createNote(newNote);
     widget.refresh();
   }
 
   Future _deleteNote(int id) async {
-    await NoteDatabase.instance.delete(id);
+    await StudentDatabase.instance.deleteNote(id);
     widget.refresh();
   }
 
   Future _readNote(int id) async {
-    editedNote = await NoteDatabase.instance.readNote(id);
+    editedNote = await StudentDatabase.instance.readNote(id);
   }
 
   Future _editNote(Note note) async {
-    await NoteDatabase.instance.updateNote(note);
+    await StudentDatabase.instance.updateNote(note);
     widget.refresh();
   }
 
@@ -117,10 +117,6 @@ class _NotesPageState extends State<NotesPage>
                                                   deleteNote: _deleteNote,
                                                   id: widget.notesList[index].id
                                                       as int));
-                                      //_deleteNote(_notesList[index].id as int);
-                                      ///ScaffoldMessenger.of(context)
-                                      //    .showSnackBar(const SnackBar(
-                                      //         content: Text('Note deleted')));
                                     },
                                   ),
                                 ),

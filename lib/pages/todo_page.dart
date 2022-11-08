@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
-import '../db/note_database.dart';
+import '../db/database.dart';
+import '../models/calendar.dart';
 import '../models/note.dart';
 import '../widgets/appbar.dart';
 
 class ToDoPage extends StatefulWidget {
   final Function refresh;
   final List<Note> notesList;
-  ToDoPage({required this.refresh, required this.notesList});
+  ToDoPage({
+    required this.refresh,
+    required this.notesList,
+  });
 
   @override
   State<ToDoPage> createState() => _ToDoPageState();

@@ -36,6 +36,7 @@ class Note {
       NoteFields.title: title,
       NoteFields.done: done == true ? 1 : 0,
       NoteFields.isActive: isActive == true ? 1 : 0,
+      NoteFields.priority: priority,
     };
     // Please don't look at this code it's 11 PM
     if (id != null) {
@@ -43,9 +44,6 @@ class Note {
     }
     if (subtitle != null) {
       map[NoteFields.subtitle] = subtitle;
-    }
-    if (priority != null) {
-      map[NoteFields.priority] = priority;
     }
     return map;
   }
