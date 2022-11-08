@@ -21,14 +21,14 @@ class Note {
   final int? id;
   final String title;
   final String? subtitle;
-  final int? priority;
+  final int priority;
   final bool done;
   final bool isActive;
   Note(
       {this.id,
       required this.title,
       this.subtitle,
-      this.priority,
+      required this.priority,
       required this.done,
       required this.isActive});
   Map<String, Object?> toMap() {
@@ -66,12 +66,11 @@ class Note {
         done: done ?? this.done,
         isActive: isActive ?? this.isActive,
       );
-
   static Note fromMap(Map<String, Object?> note) => Note(
         id: note[NoteFields.id] as int?,
         title: note[NoteFields.title] as String,
         subtitle: note[NoteFields.subtitle] as String?,
-        priority: note[NoteFields.priority] as int?,
+        priority: note[NoteFields.priority] as int,
         done: note[NoteFields.done] == 1,
         isActive: note[NoteFields.isActive] == 1,
       );

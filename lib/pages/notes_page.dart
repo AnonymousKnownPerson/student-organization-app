@@ -6,9 +6,12 @@ import '../db/note_database.dart';
 import '../models/note.dart';
 import '../widgets/addNotePopup.dart';
 import '../widgets/appbar.dart';
+import '../widgets/editNotePopup.dart';
 
 class NotesPage extends StatefulWidget {
-  const NotesPage({super.key});
+  final Function refresh;
+  final List<Note> notesList;
+  NotesPage({required this.refresh, required this.notesList});
   @override
   State<NotesPage> createState() => _NotesPageState();
 }
@@ -16,27 +19,10 @@ class NotesPage extends StatefulWidget {
 class _NotesPageState extends State<NotesPage>
     with AutomaticKeepAliveClientMixin {
   bool _isLoading = false;
-  List<Note> _notesList = [];
+  //List<Note> _notesList = [];
+  Note? editedNote = null;
 
-  @override
-  void initState() {
-    super.initState();
-    refreshNotes();
-  }
-
-  @override
-  void dispose() {
-    NoteDatabase.instance.close();
-    super.dispose();
-  }
-
-  Future refreshNotes() async {
-    setState(() => _isLoading = true);
-    _notesList = await NoteDatabase.instance.readNotes(false);
-    setState(() => _isLoading = false);
-  }
-
-  Future _addNote(String title, String? subtitle, int? priority) async {
+  Future _addNote(String title, String? subtitle, int priority) async {
     final newNote = Note(
         title: title,
         subtitle: subtitle,
@@ -44,12 +30,21 @@ class _NotesPageState extends State<NotesPage>
         done: false,
         isActive: false);
     await NoteDatabase.instance.create(newNote);
-    refreshNotes();
+    widget.refresh();
   }
 
   Future _deleteNote(int id) async {
     await NoteDatabase.instance.delete(id);
-    refreshNotes();
+    widget.refresh();
+  }
+
+  Future _readNote(int id) async {
+    editedNote = await NoteDatabase.instance.readNote(id);
+  }
+
+  Future _editNote(Note note) async {
+    await NoteDatabase.instance.updateNote(note);
+    widget.refresh();
   }
 
   @override
@@ -57,7 +52,8 @@ class _NotesPageState extends State<NotesPage>
     super.build(context);
     final mainHeight = MediaQuery.of(context).size.height -
         52 -
-        MediaQuery.of(context).padding.top;
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: const AppBarWidget(title: 'Notes'),
@@ -75,9 +71,11 @@ class _NotesPageState extends State<NotesPage>
                         shrinkWrap: true,
                         itemBuilder: (contx, index) {
                           return GestureDetector(
-                            //onLongPress: () => ,
+                            onDoubleTap: () => _editNoteAction(
+                                context, widget.notesList[index].id as int),
                             child: Card(
                               elevation: 5,
+                              margin: EdgeInsets.all(5),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: ListTile(
@@ -88,11 +86,11 @@ class _NotesPageState extends State<NotesPage>
                                     foregroundColor: Colors.white,
                                     child: FittedBox(
                                       child: Text(
-                                          '${_notesList[index].priority ?? '?'}'),
+                                          '${widget.notesList[index].priority}'),
                                     ),
                                   ),
                                   title: Text(
-                                    _notesList[index].title.toString(),
+                                    widget.notesList[index].title.toString(),
                                     style: const TextStyle(
                                       fontSize: 19,
                                       fontWeight: FontWeight.bold,
@@ -104,7 +102,7 @@ class _NotesPageState extends State<NotesPage>
                                             .colorScheme
                                             .secondary,
                                       ),
-                                      _notesList[index].subtitle ??
+                                      widget.notesList[index].subtitle ??
                                           'No more data'),
                                   trailing: IconButton(
                                     icon: Icon(Icons.delete,
@@ -117,7 +115,7 @@ class _NotesPageState extends State<NotesPage>
                                           builder: (BuildContext context) =>
                                               DeletePopup(
                                                   deleteNote: _deleteNote,
-                                                  id: _notesList[index].id
+                                                  id: widget.notesList[index].id
                                                       as int));
                                       //_deleteNote(_notesList[index].id as int);
                                       ///ScaffoldMessenger.of(context)
@@ -130,7 +128,7 @@ class _NotesPageState extends State<NotesPage>
                             ),
                           );
                         },
-                        itemCount: _notesList.length,
+                        itemCount: widget.notesList.length,
                       ),
                     ),
                     /*IconButton(
@@ -139,8 +137,14 @@ class _NotesPageState extends State<NotesPage>
                       color: Theme.of(context).colorScheme.primary))*/
                   ],
                 )
-              : const Positioned.fill(
-                  child: Center(child: GFLoader()),
+              : Stack(
+                  children: const [
+                    Positioned.fill(
+                      child: Center(
+                        child: GFLoader(),
+                      ),
+                    ),
+                  ],
                 ),
         ),
       ),
@@ -166,6 +170,21 @@ class _NotesPageState extends State<NotesPage>
             ),
           );
         });
+  }
+
+  void _editNoteAction(BuildContext ctx, int id) {
+    _readNote(id);
+    showModalBottomSheet(
+      context: ctx,
+      builder: (_) {
+        return GestureDetector(
+          child: EditNotePopup(
+            editNote: _editNote,
+            note: editedNote as Note,
+          ),
+        );
+      },
+    );
   }
 
   @override

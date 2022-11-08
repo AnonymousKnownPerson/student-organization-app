@@ -24,14 +24,14 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'Quicksand',
       ),
-      initialRoute: '/',
+      /*
       routes: {
-        '/': (context) => const HomePage(),
         '/calendar-page': (context) => CalendarPage(),
         '/todo-list': (context) => ToDoPage(),
         '/notes': (context) => const NotesPage(),
         '/settings': (context) => const SettingsPage(),
-      },
+      },*/
+      home: HomePage(),
     );
   }
 }

@@ -50,7 +50,7 @@ class NoteDatabase {
     final result = await db.query(
       tableNote,
       columns: NoteFields.values,
-      where: '${NoteFields.id} = ?', // prevents SQL Injenction
+      where: '${NoteFields.id} = ?', // prevents SQL Injection
       whereArgs: [id],
     );
     if (result.isNotEmpty) {
@@ -60,6 +60,7 @@ class NoteDatabase {
     }
   }
 
+/*
   Future readLatestNoteId() async {
     final db = await instance.database;
     final result = await db.rawQuery(
@@ -70,7 +71,7 @@ class NoteDatabase {
       throw Exception('Table note is empty');
     }
   }
-
+*/
   //not useful rn
 /*
   Future<List<Note>> readAllNotes() async {
@@ -97,7 +98,7 @@ class NoteDatabase {
     final db = await instance.database;
     return db.update(
       tableNote, note.toMap(),
-      where: '${NoteFields.id} = ?', // prevents SQL Injenction
+      where: '${NoteFields.id} = ?', // prevents SQL Injection
       whereArgs: [note.id],
     );
   }
@@ -107,7 +108,7 @@ class NoteDatabase {
 
     return await db.delete(
       tableNote,
-      where: '${NoteFields.id} = ?', // prevents SQL Injenction
+      where: '${NoteFields.id} = ?', // prevents SQL Injection
       whereArgs: [id],
     );
   }
