@@ -17,7 +17,7 @@ class _AddNotePopupState extends State<AddNotePopup> {
     final newTitle = _titleController.text;
     final newSubtitle = _subtitleController.text;
 
-    if (newTitle.isEmpty || newSubtitle.isEmpty) {
+    if (newTitle.isEmpty) {
       return;
     }
     widget.addNote(newTitle, newSubtitle, _priorityVal);
@@ -40,7 +40,7 @@ class _AddNotePopupState extends State<AddNotePopup> {
           ),
           TextField(
             decoration: const InputDecoration(
-              labelText: 'Subtitle',
+              labelText: 'Subtitle (Optional)',
             ),
             controller: _subtitleController,
             onSubmitted: (_) => _addNewNote(),

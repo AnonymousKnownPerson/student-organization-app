@@ -26,7 +26,7 @@ class Calendar {
   final DateTime date;
   final bool repeat;
   final int? repeatEvery;
-  final double duration;
+  final int duration;
 
   Calendar({
     this.id,
@@ -45,7 +45,7 @@ class Calendar {
     DateTime? date,
     bool? repeat,
     int? repeatEvery,
-    double? duration,
+    int? duration,
   }) =>
       Calendar(
         id: id ?? this.id,
@@ -83,6 +83,6 @@ class Calendar {
         date: DateTime.parse(calendarTask[CalendarFields.date] as String),
         repeat: calendarTask[CalendarFields.repeat] == 1,
         repeatEvery: calendarTask[CalendarFields.repeatEvery] as int?,
-        duration: calendarTask[CalendarFields.duration] as double,
+        duration: calendarTask[CalendarFields.duration] as int,
       );
 }

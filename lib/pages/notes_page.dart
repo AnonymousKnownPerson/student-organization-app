@@ -102,8 +102,14 @@ class _NotesPageState extends State<NotesPage>
                                             .colorScheme
                                             .secondary,
                                       ),
-                                      widget.notesList[index].subtitle ??
-                                          'No more data'),
+                                      widget.notesList[index].subtitle ==
+                                                  null ||
+                                              widget.notesList[index]
+                                                      .subtitle! ==
+                                                  ''
+                                          ? 'No more data'
+                                          : widget.notesList[index].subtitle
+                                              as String),
                                   trailing: IconButton(
                                     icon: Icon(Icons.delete,
                                         color: Theme.of(context)
