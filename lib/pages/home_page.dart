@@ -4,7 +4,9 @@ import 'package:student_app/pages/calendar_page.dart';
 import 'package:student_app/pages/notes_page.dart';
 import 'package:student_app/pages/settings_page.dart';
 import 'package:student_app/pages/todo_page.dart';
+import 'package:table_calendar/table_calendar.dart';
 
+import '../models/calendar.dart';
 import '../models/note.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,14 +19,27 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Note> _notesList = [];
   List<Note> _toDoList = [];
-  int _currentPage = 0;
+  List<Calendar> _calendarTasks = [];
+  List<Calendar> _todayCalendarTask = [];
+  int _currentPage = 1;
   bool _isLoading = false;
-  final PageController _pageController = PageController();
+  final PageController _pageController = PageController(initialPage: 1);
   void _onPageChanged(int index) {
     setState(() {
       _currentPage = index;
-      _refreshForNotes();
-      _refreshForToDo();
+      switch (index) {
+        case 0:
+          _refreshCalendarTasks();
+          break;
+        case 1:
+          _refreshForToDo();
+          break;
+        case 2:
+          _refreshForNotes();
+          break;
+        default:
+          break;
+      }
     });
   }
 
@@ -41,6 +56,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _refreshForNotes();
     _refreshForToDo();
+    _refreshCalendarTasks();
   }
 
   @override
@@ -58,6 +74,19 @@ class _HomePageState extends State<HomePage> {
   Future _refreshForToDo() async {
     setState(() => _isLoading = true);
     _toDoList = await StudentDatabase.instance.readNotes(true);
+    _todayCalendarTask = await StudentDatabase.instance.readTodayTasks();
+    _todayCalendarTask = _todayCalendarTask
+        .where((element) => isSameDay(element.date, DateTime.now()))
+        .toList();
+    _todayCalendarTask.sort((a, b) => a.date.compareTo(b.date));
+    setState(() => _isLoading = false);
+  }
+
+  Future _refreshCalendarTasks() async {
+    setState(() => _isLoading = true);
+    _calendarTasks = await StudentDatabase.instance.readCalendarTasks();
+    _calendarTasks.sort((a, b) => a.date.compareTo(b.date));
+
     setState(() => _isLoading = false);
   }
 
@@ -69,10 +98,14 @@ class _HomePageState extends State<HomePage> {
         onPageChanged: _onPageChanged,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          CalendarPage(),
+          CalendarPage(
+            calendarTasks: _calendarTasks,
+            refresh: _refreshCalendarTasks,
+          ),
           ToDoPage(
             refresh: _refreshForToDo,
             notesList: _toDoList,
+            todayCalendarList: _todayCalendarTask,
           ),
           NotesPage(
             refresh: _refreshForNotes,

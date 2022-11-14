@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -56,7 +57,7 @@ class StudentDatabase {
     const calendarDateType = 'TEXT NOT NULL';
     const calendarRepeatType = 'INTEGER NOT NULL';
     const calendarRepeatEveryType = 'INTEGER';
-    const calendarDurationType = 'REAL NOT NULL';
+    const calendarDurationType = 'INTEGER NOT NULL';
     await db.execute('''
     CREATE TABLE $tableCalendar (
       ${CalendarFields.id} $calendarIdType,
@@ -152,6 +153,21 @@ class StudentDatabase {
       orderBy: '${CalendarFields.date} DESC',
     );
     return result.map((e) => Calendar.fromMap(e)).toList();
+  }
+
+  Future<List<Calendar>> readTodayTasks() async {
+    // ! edit this later
+    final db = await instance.database;
+    final result = await db.query(
+      tableCalendar,
+      orderBy: '${CalendarFields.date} ASC',
+    );
+    List<Calendar> temp = result.map((e) => Calendar.fromMap(e)).toList();
+    return temp
+        .where(
+            (element) => //DateTimeRange(start: element.date, end: element.date)
+                true)
+        .toList();
   }
 
   Future<int> updateNote(Note note) async {
