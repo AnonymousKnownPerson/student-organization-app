@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';
 import 'package:student_app/db/database.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -10,11 +11,13 @@ import '../widgets/appbar.dart';
 class CalendarPage extends StatefulWidget {
   final List<Calendar> calendarTasks;
   final Function refresh;
+  final bool isLoading;
 
   const CalendarPage({
     super.key,
     required this.calendarTasks,
     required this.refresh,
+    required this.isLoading,
   });
 
   @override
@@ -120,89 +123,119 @@ class _CalendarPageState extends State<CalendarPage>
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Card(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemBuilder: (contx, index) {
-                          return GestureDetector(
-                            child: Card(
-                              elevation: 0.3,
-                              margin: const EdgeInsets.all(5),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListTile(
-                                  leading: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: _calendarDayList[index]
-                                                  .date
-                                                  .isAfter(DateTime.now()) &&
-                                              _calendarDayList[index]
-                                                  .date
-                                                  .add(
-                                                    Duration(
-                                                        minutes:
-                                                            _calendarDayList[
-                                                                    index]
-                                                                .duration),
-                                                  )
-                                                  .isBefore(
-                                                    DateTime.now(),
-                                                  )
-                                          ? const Color.fromARGB(
-                                              255, 146, 175, 147)
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                    ),
-                                    margin:
-                                        const EdgeInsets.fromLTRB(1, 3, 1, 1),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: Text(
-                                        '${DateFormat("Hm").format(_calendarDayList[index].date)} - ${DateFormat("Hm").format(_calendarDayList[index].date.add(Duration(minutes: _calendarDayList[index].duration)))}',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20,
+                child: !widget.isLoading
+                    ? Column(
+                        children: [
+                          Expanded(
+                            child: _calendarDayList.isNotEmpty
+                                ? ListView.builder(
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    itemBuilder: (contx, index) {
+                                      return GestureDetector(
+                                        child: Card(
+                                          elevation: 0.3,
+                                          margin: const EdgeInsets.all(5),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ListTile(
+                                              leading: Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  color: _calendarDayList[index]
+                                                              .date
+                                                              .isBefore(DateTime
+                                                                  .now()) &&
+                                                          _calendarDayList[
+                                                                  index]
+                                                              .date
+                                                              .add(
+                                                                Duration(
+                                                                    minutes: _calendarDayList[
+                                                                            index]
+                                                                        .duration),
+                                                              )
+                                                              .isAfter(
+                                                                DateTime.now(),
+                                                              )
+                                                      ? const Color.fromARGB(
+                                                          255, 146, 175, 147)
+                                                      : Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
+                                                ),
+                                                margin:
+                                                    const EdgeInsets.fromLTRB(
+                                                        1, 3, 1, 1),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(4),
+                                                  child: Text(
+                                                    '${DateFormat("Hm").format(_calendarDayList[index].date)} - ${DateFormat("Hm").format(_calendarDayList[index].date.add(Duration(minutes: _calendarDayList[index].duration)))}',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              title: Text(
+                                                _calendarDayList[index]
+                                                    .title
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 19,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              subtitle: Text(
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary,
+                                                  ),
+                                                  _calendarDayList[index]
+                                                                  .subtitle ==
+                                                              null ||
+                                                          _calendarDayList[
+                                                                      index]
+                                                                  .subtitle! ==
+                                                              ''
+                                                      ? 'No more data'
+                                                      : _calendarDayList[index]
+                                                          .subtitle as String),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    itemCount: _calendarDayList.length,
+                                  )
+                                : Stack(
+                                    children: const [
+                                      Positioned.fill(
+                                        child: Center(
+                                          child: Text(
+                                              'No calendar tasks for this day!'),
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                  title: Text(
-                                    _calendarDayList[index].title.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 19,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                      ),
-                                      _calendarDayList[index].subtitle ==
-                                                  null ||
-                                              _calendarDayList[index]
-                                                      .subtitle! ==
-                                                  ''
-                                          ? 'No more data'
-                                          : _calendarDayList[index].subtitle
-                                              as String),
-                                ),
-                              ),
+                          ),
+                        ],
+                      )
+                    : Stack(
+                        children: const [
+                          Positioned.fill(
+                            child: Center(
+                              child: GFLoader(),
                             ),
-                          );
-                        },
-                        itemCount: _calendarDayList.length,
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ),

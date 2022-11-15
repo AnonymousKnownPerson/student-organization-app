@@ -101,15 +101,18 @@ class _HomePageState extends State<HomePage> {
           CalendarPage(
             calendarTasks: _calendarTasks,
             refresh: _refreshCalendarTasks,
+            isLoading: _isLoading,
           ),
           ToDoPage(
             refresh: _refreshForToDo,
             notesList: _toDoList,
             todayCalendarList: _todayCalendarTask,
+            isLoading: _isLoading,
           ),
           NotesPage(
             refresh: _refreshForNotes,
             notesList: _notesList,
+            isLoading: _isLoading,
           ),
           SettingsPage(),
         ],

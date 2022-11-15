@@ -11,14 +11,17 @@ import '../widgets/editNotePopup.dart';
 class NotesPage extends StatefulWidget {
   final Function refresh;
   final List<Note> notesList;
-  NotesPage({required this.refresh, required this.notesList});
+  final bool isLoading;
+  NotesPage(
+      {required this.refresh,
+      required this.notesList,
+      required this.isLoading});
   @override
   State<NotesPage> createState() => _NotesPageState();
 }
 
 class _NotesPageState extends State<NotesPage>
     with AutomaticKeepAliveClientMixin {
-  bool _isLoading = false;
   //List<Note> _notesList = [];
   Note? editedNote = null;
 
@@ -62,7 +65,7 @@ class _NotesPageState extends State<NotesPage>
         height: mainHeight,
         child: Card(
           elevation: 5,
-          child: !_isLoading
+          child: !widget.isLoading
               ? Column(
                   children: [
                     Expanded(
