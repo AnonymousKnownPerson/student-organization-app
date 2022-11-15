@@ -7,17 +7,21 @@ import 'package:table_calendar/table_calendar.dart';
 import '../models/calendar.dart';
 import '../widgets/addCalendarTask.dart';
 import '../widgets/appbar.dart';
+import '../widgets/deleteCalendarTask.dart';
+import '../widgets/editCalendarTaskPopup.dart';
 
 class CalendarPage extends StatefulWidget {
   final List<Calendar> calendarTasks;
   final Function refresh;
   final bool isLoading;
+  final int checkPage;
 
   const CalendarPage({
     super.key,
     required this.calendarTasks,
     required this.refresh,
     required this.isLoading,
+    required this.checkPage,
   });
 
   @override
@@ -29,7 +33,9 @@ class _CalendarPageState extends State<CalendarPage>
   CalendarFormat _calFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
+  Calendar? _editedCalendarTask = null;
   List<Calendar> _calendarDayList = [];
+  List<Calendar> _bottomEventList = [];
   void _onFormatChanged(CalendarFormat format) {
     setState(() {
       _calFormat = format;
@@ -41,18 +47,39 @@ class _CalendarPageState extends State<CalendarPage>
       setState(() {
         _focusedDay = focusedD;
         _selectedDay = selectedD;
-        _calendarDayList = _getEventsForDay(selectedD);
+        _bottomEventList = _getEventsForDay(_selectedDay);
       });
     }
   }
 
-  Future _addCalendarTask(
-      {required String title,
-      String? subtitle,
-      required DateTime date,
-      required bool repeat,
-      int? repeatEvery,
-      required int duration}) async {
+  Future _readCalendarTask(int id) async {
+    _editedCalendarTask = await StudentDatabase.instance.readCalendarTask(id);
+  }
+
+  Future _readBottomList() async {
+    _bottomEventList = _getEventsForDay(_selectedDay);
+  }
+
+  Future _deleteCalendarTask(int id) async {
+    await StudentDatabase.instance.deleteCalendarTask(id);
+    widget.refresh();
+    _readBottomList();
+  }
+
+  Future _editCalendarTask(Calendar calendarTask) async {
+    await StudentDatabase.instance.updateCalendarTask(calendarTask);
+    widget.refresh();
+    _readBottomList();
+  }
+
+  Future _addCalendarTask({
+    required String title,
+    String? subtitle,
+    required DateTime date,
+    required bool repeat,
+    int? repeatEvery,
+    required int duration,
+  }) async {
     final newCalendarTask = Calendar(
       title: title,
       date: date,
@@ -62,12 +89,14 @@ class _CalendarPageState extends State<CalendarPage>
       subtitle: subtitle,
     );
     await StudentDatabase.instance.createCalendarTask(newCalendarTask);
-    widget.refresh();
+    await widget.refresh();
+    _readBottomList();
   }
 
   @override
   void initState() {
     super.initState();
+    _readBottomList();
   }
 
   @override
@@ -127,92 +156,141 @@ class _CalendarPageState extends State<CalendarPage>
                     ? Column(
                         children: [
                           Expanded(
-                            child: _calendarDayList.isNotEmpty
-                                ? ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    shrinkWrap: true,
-                                    itemBuilder: (contx, index) {
-                                      return GestureDetector(
-                                        child: Card(
-                                          elevation: 0.3,
-                                          margin: const EdgeInsets.all(5),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: ListTile(
-                                              leading: Container(
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  color: _calendarDayList[index]
-                                                              .date
-                                                              .isBefore(DateTime
-                                                                  .now()) &&
-                                                          _calendarDayList[
-                                                                  index]
-                                                              .date
-                                                              .add(
-                                                                Duration(
-                                                                    minutes: _calendarDayList[
-                                                                            index]
-                                                                        .duration),
-                                                              )
-                                                              .isAfter(
-                                                                DateTime.now(),
-                                                              )
-                                                      ? const Color.fromARGB(
-                                                          255, 146, 175, 147)
-                                                      : Theme.of(context)
-                                                          .colorScheme
-                                                          .primary,
-                                                ),
-                                                margin:
-                                                    const EdgeInsets.fromLTRB(
-                                                        1, 3, 1, 1),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(4),
-                                                  child: Text(
-                                                    '${DateFormat("Hm").format(_calendarDayList[index].date)} - ${DateFormat("Hm").format(_calendarDayList[index].date.add(Duration(minutes: _calendarDayList[index].duration)))}',
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 20,
+                            child: _bottomEventList.isNotEmpty
+                                ? FutureBuilder(
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                              ConnectionState.none &&
+                                          !snapshot.hasData) {
+                                        return Stack(
+                                          children: const [
+                                            Positioned.fill(
+                                              child: Center(
+                                                child: Text('Loading...'),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }
+
+                                      return ListView.builder(
+                                        scrollDirection: Axis.vertical,
+                                        shrinkWrap: true,
+                                        itemBuilder: (contx, index) {
+                                          return GestureDetector(
+                                            onDoubleTap: () =>
+                                                _editCalendarTaskAction(
+                                                    context,
+                                                    _bottomEventList[index].id
+                                                        as int),
+                                            child: Card(
+                                              elevation: 0.3,
+                                              margin: const EdgeInsets.all(5),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: ListTile(
+                                                  leading: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                      color: _bottomEventList[
+                                                                      index]
+                                                                  .date
+                                                                  .isBefore(DateTime
+                                                                      .now()) &&
+                                                              _bottomEventList[
+                                                                      index]
+                                                                  .date
+                                                                  .add(
+                                                                    Duration(
+                                                                        minutes:
+                                                                            _bottomEventList[index].duration),
+                                                                  )
+                                                                  .isAfter(
+                                                                    DateTime
+                                                                        .now(),
+                                                                  )
+                                                          ? const Color
+                                                                  .fromARGB(255,
+                                                              146, 175, 147)
+                                                          : Theme.of(context)
+                                                              .colorScheme
+                                                              .primary,
+                                                    ),
+                                                    margin: const EdgeInsets
+                                                        .fromLTRB(1, 3, 1, 1),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              4),
+                                                      child: Text(
+                                                        '${DateFormat("Hm").format(_bottomEventList[index].date)} - ${DateFormat("Hm").format(_bottomEventList[index].date.add(Duration(minutes: _bottomEventList[index].duration)))}',
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 20,
+                                                        ),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                              ),
-                                              title: Text(
-                                                _calendarDayList[index]
-                                                    .title
-                                                    .toString(),
-                                                style: const TextStyle(
-                                                  fontSize: 19,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              subtitle: Text(
-                                                  style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary,
+                                                  trailing: IconButton(
+                                                    icon: Icon(Icons.delete,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary),
+                                                    onPressed: () {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              DeleteCalendarTask(
+                                                                  deleteCalendarTask:
+                                                                      _deleteCalendarTask,
+                                                                  id: _bottomEventList[
+                                                                          index]
+                                                                      .id as int));
+                                                    },
                                                   ),
-                                                  _calendarDayList[index]
-                                                                  .subtitle ==
-                                                              null ||
-                                                          _calendarDayList[
+                                                  title: Text(
+                                                    _bottomEventList[index]
+                                                        .title
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                      fontSize: 19,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  subtitle: Text(
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .secondary,
+                                                      ),
+                                                      _bottomEventList[index]
+                                                                      .subtitle ==
+                                                                  null ||
+                                                              _bottomEventList[
+                                                                          index]
+                                                                      .subtitle! ==
+                                                                  ''
+                                                          ? 'No more data'
+                                                          : _bottomEventList[
                                                                       index]
-                                                                  .subtitle! ==
-                                                              ''
-                                                      ? 'No more data'
-                                                      : _calendarDayList[index]
-                                                          .subtitle as String),
+                                                                  .subtitle
+                                                              as String),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
+                                          );
+                                        },
+                                        itemCount: _bottomEventList.length,
                                       );
                                     },
-                                    itemCount: _calendarDayList.length,
+                                    initialData: _readBottomList(),
                                   )
                                 : Stack(
                                     children: const [
@@ -266,4 +344,19 @@ class _CalendarPageState extends State<CalendarPage>
 
   @override
   bool get wantKeepAlive => true;
+
+  void _editCalendarTaskAction(BuildContext ctx, int id) {
+    _readCalendarTask(id);
+    showModalBottomSheet(
+      context: ctx,
+      builder: (_) {
+        return GestureDetector(
+          child: EditCalendarTaskPopup(
+            editCalendarTask: _editCalendarTask,
+            calendarTask: _editedCalendarTask as Calendar,
+          ),
+        );
+      },
+    );
+  }
 }

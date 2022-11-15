@@ -1,28 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class AddCalendarTask extends StatefulWidget {
-  final Function addCalendarTask;
-  final DateTime selectedDay;
-  const AddCalendarTask(
-      {super.key, required this.addCalendarTask, required this.selectedDay});
+import '../models/calendar.dart';
+
+class EditCalendarTaskPopup extends StatefulWidget {
+  final Function editCalendarTask;
+  final Calendar calendarTask;
+  const EditCalendarTaskPopup(
+      {super.key, required this.editCalendarTask, required this.calendarTask});
 
   @override
-  State<AddCalendarTask> createState() => _AddCalendarTaskState();
+  State<EditCalendarTaskPopup> createState() => _EditCalendarTaskPopupState();
 }
 
-class _AddCalendarTaskState extends State<AddCalendarTask> {
+class _EditCalendarTaskPopupState extends State<EditCalendarTaskPopup> {
   final _titleController = TextEditingController();
   final _subtitleController = TextEditingController();
   final _repeatEveryController = TextEditingController();
   final _durationController = TextEditingController();
-  TimeOfDay _selectedTime = TimeOfDay.now();
+  bool _isRepeating = false;
+  TimeOfDay? _selectedTime;
   DateTime? _pickedDate;
   DateTime join(DateTime date, TimeOfDay time) {
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
   }
 
-  void _addCalendarTask() {
+  @override
+  void initState() {
+    super.initState();
+    _titleController.text = widget.calendarTask.title;
+    _subtitleController.text = widget.calendarTask.subtitle ?? '';
+    _isRepeating = widget.calendarTask.repeat;
+    _durationController.text = widget.calendarTask.duration.toString();
+    if (_isRepeating == true) {
+      _repeatEveryController.text = widget.calendarTask.repeatEvery.toString();
+    }
+    _pickedDate = widget.calendarTask.date;
+    _selectedTime = TimeOfDay.fromDateTime(widget.calendarTask.date);
+  }
+
+  void _toggleSwitch(bool val) {
+    setState(() {
+      _isRepeating = !_isRepeating;
+    });
+  }
+
+  void _showDatePick() {
+    showDatePicker(
+      context: context,
+      initialDate: _pickedDate as DateTime,
+      firstDate: DateTime.now().isAfter(_pickedDate as DateTime)
+          ? _pickedDate as DateTime
+          : DateTime.now(),
+      lastDate: DateTime.now().add(
+        const Duration(days: 1095),
+      ),
+    ).then((chosenData) {
+      if (chosenData == null) {
+        return;
+      }
+      setState(() {
+        _pickedDate = chosenData;
+      });
+    });
+  }
+
+  void _editCalendarTask() {
     final newTitle = _titleController.text;
     final newSubtitle = _subtitleController.text;
     int? newDurationTime = null;
@@ -39,52 +82,16 @@ class _AddCalendarTaskState extends State<AddCalendarTask> {
         newDurationTime == null) {
       return;
     }
-
-    widget.addCalendarTask(
+    Calendar fixedNote = widget.calendarTask.copy(
       title: newTitle,
-      subtitle: newSubtitle.isNotEmpty ? newSubtitle : null,
+      subtitle: newSubtitle,
       duration: newDurationTime,
-      date: join(_pickedDate as DateTime, _selectedTime),
+      date: join(_pickedDate as DateTime, _selectedTime as TimeOfDay),
       repeat: _isRepeating,
       repeatEvery: newRepeatEvery,
     );
+    widget.editCalendarTask(fixedNote);
     Navigator.of(context).pop();
-  }
-
-  void _showDatePick() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(
-        const Duration(days: 1095),
-      ),
-    ).then((chosenData) {
-      if (chosenData == null) {
-        return;
-      }
-      setState(() {
-        _pickedDate = chosenData;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _pickedDate = widget.selectedDay;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  bool _isRepeating = false;
-  void _toggleSwitch(bool val) {
-    setState(() {
-      _isRepeating = !_isRepeating;
-    });
   }
 
   @override
@@ -99,14 +106,14 @@ class _AddCalendarTaskState extends State<AddCalendarTask> {
               labelText: 'Title',
             ),
             controller: _titleController,
-            onSubmitted: (_) => _addCalendarTask(),
+            onSubmitted: (_) => _editCalendarTask(),
           ),
           TextField(
             decoration: const InputDecoration(
               labelText: 'Subtitle (Optional)',
             ),
             controller: _subtitleController,
-            onSubmitted: (_) => _addCalendarTask(),
+            onSubmitted: (_) => _editCalendarTask(),
           ),
           SizedBox(
             height: 60,
@@ -123,8 +130,8 @@ class _AddCalendarTaskState extends State<AddCalendarTask> {
                     )),
                 Text(
                   _selectedTime == null
-                      ? 'No Date Chosen!'
-                      : '${_selectedTime.hour}:${_selectedTime.minute}',
+                      ? 'Pick Time!'
+                      : '${_selectedTime?.hour}:${_selectedTime?.minute}',
                 ),
                 TextButton(
                   onPressed: () {
@@ -159,7 +166,7 @@ class _AddCalendarTaskState extends State<AddCalendarTask> {
                     ),
                     controller: _repeatEveryController,
                     keyboardType: TextInputType.number,
-                    onSubmitted: (_) => _addCalendarTask(),
+                    onSubmitted: (_) => _editCalendarTask(),
                   )
                 : Container(),
           ),
@@ -169,17 +176,17 @@ class _AddCalendarTaskState extends State<AddCalendarTask> {
             ),
             controller: _durationController,
             keyboardType: TextInputType.number,
-            onSubmitted: (_) => _addCalendarTask(),
+            onSubmitted: (_) => _editCalendarTask(),
           ),
           const SizedBox(
             height: 10,
           ),
           ElevatedButton(
-            onPressed: _addCalendarTask,
+            onPressed: _editCalendarTask,
             child: const Padding(
               padding: EdgeInsets.all(12.0),
               child: Text(
-                'Add New Note',
+                'Edit This Note',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,

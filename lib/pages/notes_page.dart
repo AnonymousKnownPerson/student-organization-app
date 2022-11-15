@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_app/widgets/deletePopup.dart';
+import 'package:student_app/widgets/deleteNote.dart';
 import 'package:getwidget/getwidget.dart';
 
 import '../db/database.dart';
@@ -12,17 +12,17 @@ class NotesPage extends StatefulWidget {
   final Function refresh;
   final List<Note> notesList;
   final bool isLoading;
-  NotesPage(
-      {required this.refresh,
-      required this.notesList,
-      required this.isLoading});
+  NotesPage({
+    required this.refresh,
+    required this.notesList,
+    required this.isLoading,
+  });
   @override
   State<NotesPage> createState() => _NotesPageState();
 }
 
 class _NotesPageState extends State<NotesPage>
     with AutomaticKeepAliveClientMixin {
-  //List<Note> _notesList = [];
   Note? editedNote = null;
 
   Future _addNote(String title, String? subtitle, int priority) async {
@@ -78,7 +78,7 @@ class _NotesPageState extends State<NotesPage>
                                 context, widget.notesList[index].id as int),
                             child: Card(
                               elevation: 5,
-                              margin: EdgeInsets.all(5),
+                              margin: const EdgeInsets.all(5),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: ListTile(
@@ -122,7 +122,7 @@ class _NotesPageState extends State<NotesPage>
                                       showDialog(
                                           context: context,
                                           builder: (BuildContext context) =>
-                                              DeletePopup(
+                                              DeleteNote(
                                                   deleteNote: _deleteNote,
                                                   id: widget.notesList[index].id
                                                       as int));

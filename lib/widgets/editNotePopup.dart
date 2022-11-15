@@ -22,14 +22,14 @@ class _EditNotePopupState extends State<EditNotePopup> {
     if (newTitle.isEmpty) {
       return;
     }
-    Note xd = widget.note.copy(
+    Note fixedNote = widget.note.copy(
       title: newTitle,
       subtitle: newSubtitle,
       priority: _priorityVal,
       isActive: _isActive,
       done: _done,
     );
-    widget.editNote(xd);
+    widget.editNote(fixedNote);
     Navigator.of(context).pop();
   }
 

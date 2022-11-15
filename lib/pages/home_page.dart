@@ -102,6 +102,7 @@ class _HomePageState extends State<HomePage> {
             calendarTasks: _calendarTasks,
             refresh: _refreshCalendarTasks,
             isLoading: _isLoading,
+            checkPage: _currentPage,
           ),
           ToDoPage(
             refresh: _refreshForToDo,
@@ -139,7 +140,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             label: 'Notes',
             icon: Icon(
-              Icons.note,
+              Icons.note_alt,
             ),
           ),
           BottomNavigationBarItem(
