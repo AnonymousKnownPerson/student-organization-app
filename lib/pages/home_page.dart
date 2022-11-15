@@ -101,15 +101,19 @@ class _HomePageState extends State<HomePage> {
           CalendarPage(
             calendarTasks: _calendarTasks,
             refresh: _refreshCalendarTasks,
+            isLoading: _isLoading,
+            checkPage: _currentPage,
           ),
           ToDoPage(
             refresh: _refreshForToDo,
             notesList: _toDoList,
             todayCalendarList: _todayCalendarTask,
+            isLoading: _isLoading,
           ),
           NotesPage(
             refresh: _refreshForNotes,
             notesList: _notesList,
+            isLoading: _isLoading,
           ),
           SettingsPage(),
         ],
@@ -136,7 +140,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             label: 'Notes',
             icon: Icon(
-              Icons.note,
+              Icons.note_alt,
             ),
           ),
           BottomNavigationBarItem(

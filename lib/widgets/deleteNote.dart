@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class DeletePopup extends StatelessWidget {
+class DeleteNote extends StatelessWidget {
   final Function deleteNote;
   final int id;
-  DeletePopup({super.key, required this.deleteNote, required this.id});
+  DeleteNote({super.key, required this.deleteNote, required this.id});
 
   @override
   Widget build(BuildContext context) {
